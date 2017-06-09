@@ -32,21 +32,8 @@ class Application extends Container
     {
         parent::__construct();
 
-        $this['opt'] = function () use ($config) {
-            return new Opt($config);
-        };
-
-        if ($this['config']['debug']) {
-            error_reporting(E_ALL);
-        }
-
         $this->registerProviders();
-        $this->registerBase();
-        $this->initializeLogger();
 
-        Http::setDefaultOptions($this['config']->get('guzzle', ['timeout' => 5.0]));
-
-        $this->logConfiguration($config);
     }
 
 

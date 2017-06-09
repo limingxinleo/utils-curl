@@ -1,0 +1,14 @@
+{
+    "name": "limingxinleo/utils-curl",
+    "description": "This is a util for redis",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "limx\\utils\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0"
+    }
+}

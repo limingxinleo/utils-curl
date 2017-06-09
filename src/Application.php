@@ -28,7 +28,7 @@ class Application extends Container
      *
      * @param array $config
      */
-    public function __construct($config)
+    public function __construct()
     {
         parent::__construct();
 

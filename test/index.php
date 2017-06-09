@@ -6,9 +6,3 @@
 // +----------------------------------------------------------------------
 // | Author: limx <715557344@qq.com> <https://github.com/limingxinleo>
 // +----------------------------------------------------------------------
-use limx\curl\Application;
-
-$curl = new Application();
-$curl->opt->url = 'http://www.baidu.com';
-$result = $curl->client->execute();
-var_dump($result);

@@ -45,7 +45,7 @@ class Opt
 
     public function setBody($body)
     {
-        $this->customRequest = $body;
+        $this->postFields = $body;
     }
 
     public function setUrl($url)

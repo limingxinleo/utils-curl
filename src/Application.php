@@ -11,6 +11,12 @@ namespace limx\curl;
 use Pimple\Container;
 use Config;
 
+/**
+ * Class Application
+ * @package limx\curl
+ * @property Opt    $opt
+ * @property Client $client
+ */
 class Application extends Container
 {
     /**

@@ -96,9 +96,14 @@ class Client
     {
         switch ($this->contentType) {
             case 'json':
+                $this->setHeaders([
+                    'Content-Type' => 'application/json',
+                    'Content-Length' => strlen($this->body)
+                ]);
+                return json_encode($this->data);
                 break;
             default:
-                return $this->opt->postFields . http_build_query($this->data);
+                return http_build_query($this->data);
         }
 
         throw new HttpException('Failed to get input Data!');
@@ -145,6 +150,13 @@ class Client
 
     public function setData($input = [])
     {
+        $this->data = array_merge($this->data, $input);;
+        return $this;
+    }
+
+    public function setJsonData($input = [])
+    {
+        $this->contentType = 'json';
         $this->data = array_merge($this->data, $input);;
         return $this;
     }

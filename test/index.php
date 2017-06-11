@@ -14,6 +14,9 @@ use limx\curl\Application;
 $curl = new Application();
 
 $curl->opt->setUrl('https://demo.phalcon.lmx0536.cn/test/api/api?get=3');
+$result = $curl->client->execute('https://demo.phalcon.lmx0536.cn/test/api/api?get=6')->getJsonContent();
+print_r($result);
+
 $body = http_build_query(['post' => 1, 'post2' => 2]);
 $curl->opt->setBody($body);
 $curl->opt->setHeader('Header-Test', 1);
@@ -24,3 +27,8 @@ print_r($result);
 
 $result = $curl->client->get()->getContent();
 print_r(json_decode($result, true));
+
+$result = $curl->client->setHeaders([
+    'Header-Test3' => 4
+])->post()->getJsonContent(true);
+print_r($result);

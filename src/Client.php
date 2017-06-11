@@ -17,6 +17,16 @@ class Client
 
     public $response;
 
+    protected $url;
+
+    protected $data = [];
+
+    protected $headers = [];
+
+    protected $contentType;
+
+    protected $method = null;
+
     public function __construct(Opt $opt, Response $reponse)
     {
         $this->opt = $opt;
@@ -27,9 +37,7 @@ class Client
     {
         $ch = curl_init();
         // 设置抓取的url
-        if (isset($this->opt->url)) {
-            curl_setopt($ch, CURLOPT_URL, $this->opt->url);
-        }
+        curl_setopt($ch, CURLOPT_URL, $this->getUrl());
 
         // 启用时会将头文件的信息作为数据流输出。
         if (isset($this->opt->hearder)) {
@@ -47,38 +55,118 @@ class Client
         }
 
         // 设置访问 方法
-        if (isset($this->opt->customRequest)) {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->opt->customRequest);
-
-        }
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->getMethod());
 
         // 设置POST BODY
-        if (isset($this->opt->postFields)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->opt->postFields);
+        if (strtoupper($this->getMethod()) === 'POST') {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getData());
         }
 
         // 设置header
-        if (isset($this->opt->httpHeader)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->opt->httpHeader);
+        if (!empty($this->getHeaders())) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
         }
 
         return $ch;
     }
 
-    public function get()
+    protected function getHeaders()
     {
-        $this->opt->customRequest = "GET";
-        return $this->execute();
+        return array_merge(
+            isset($this->opt->httpHeader) ? $this->opt->httpHeader : [],
+            !empty($this->headers) ? $this->headers : []
+        );
     }
 
-    public function post()
+    protected function getUrl()
     {
-        $this->opt->customRequest = "POST";
-        return $this->execute();
+        if (!empty($this->url)) {
+            return $this->url;
+        }
+
+        if (!empty($this->opt->url)) {
+            return $this->opt->url;
+        }
+
+        throw new HttpException('Failed to get target Url!');
+
     }
 
-    public function execute()
+    protected function getData()
     {
+        switch ($this->contentType) {
+            case 'json':
+                break;
+            default:
+                return $this->opt->postFields . http_build_query($this->data);
+        }
+
+        throw new HttpException('Failed to get input Data!');
+    }
+
+    protected function getMethod()
+    {
+        if (isset($this->method)) {
+            return $this->method;
+        }
+        if (isset($this->opt->customRequest)) {
+            return $this->opt->customRequest;
+        }
+        return "GET";
+    }
+
+    public function setUrl($url = null)
+    {
+        if (isset($url)) {
+            if (strtoupper($this->getMethod()) === 'GET') {
+                $params = '';
+                if (strpos($url, '?') > 0) {
+                    $params = '&' . http_build_query($this->data);
+                } else {
+                    $params = '?' . http_build_query($this->data);
+                }
+                $this->url = $url . $params;
+            } else {
+                $this->url = $url;
+            }
+        }
+        return $this;
+    }
+
+    public function setHeaders($input = [])
+    {
+        $req = [];
+        foreach ($input as $key => $value) {
+            $req[] = sprintf("%s:%s", $key, $value);
+        }
+        $this->headers = array_merge($this->headers, $req);
+        return $this;
+    }
+
+    public function setData($input = [])
+    {
+        $this->data = array_merge($this->data, $input);;
+        return $this;
+    }
+
+
+    public function get(...$params)
+    {
+        $this->method = "GET";
+        return $this->execute(...$params);
+    }
+
+    public function post(...$params)
+    {
+        $this->method = "POST";
+        return $this->execute(...$params);
+    }
+
+    public function execute($url = null, $params = [])
+    {
+        $this->setData($params);
+        $this->setUrl($url);
+
         $_instance = $this->getInstance();
         //执行命令
         $result = curl_exec($_instance);
@@ -88,7 +176,17 @@ class Client
         //关闭URL请求
         curl_close($_instance);
         $this->response->setContent($result);
+        $this->clear();
         return $this->response;
+    }
+
+    protected function clear()
+    {
+        $this->data = [];
+        $this->headers = [];
+        $this->contentType = null;
+        $this->url = null;
+        $this->method = null;
     }
 
 }

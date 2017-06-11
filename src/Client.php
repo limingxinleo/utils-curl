@@ -101,7 +101,6 @@ class Client
                     'Content-Length' => strlen($this->body)
                 ]);
                 return json_encode($this->data);
-                break;
             default:
                 return http_build_query($this->data);
         }

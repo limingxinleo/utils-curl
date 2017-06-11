@@ -22,3 +22,5 @@ $headers = [
 ];
 $result = $curl->client->setHeaders($headers)->post($url, $params)->getJsonContent();
 print_r($result);
+$result = $curl->client->post($url, $params)->getJsonContent();
+print_r($result);

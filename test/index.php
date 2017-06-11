@@ -20,3 +20,6 @@ $curl->opt->setHeader('Header-Test', 1);
 $curl->opt->setHeader('Header-Test2', 3);
 $result = $curl->client->execute();
 print_r(json_decode($result, true));
+
+$result = $curl->client->execute();
+print_r(json_decode($result, true));

@@ -29,4 +29,12 @@ print_r($result);
 $result = $curl->client->setHeaders($headers)->format('json')->post($url, $params)->getJsonContent();
 print_r($result);
 
+// Content-Type=application/x-www-form-urlencoded
+$result = $curl->client->setHeaders($headers)->post($url)->getJsonContent();
+print_r($result);
+
+// Content-Type=json
+$result = $curl->client->setHeaders($headers)->format('json')->post($url)->getJsonContent();
+print_r($result);
+
 

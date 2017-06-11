@@ -118,7 +118,7 @@ class Client
                     'Content-Type' => 'application/json',
                     'Content-Length' => strlen($data)
                 ]);
-                return json_encode($data);
+                return $data;
             default:
                 return http_build_query($this->data);
         }

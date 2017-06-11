@@ -70,6 +70,11 @@ class Client
         return $ch;
     }
 
+    /**
+     * @desc   获取请求头信息
+     * @author limx
+     * @return array
+     */
     protected function getHeaders()
     {
         return array_merge(
@@ -78,6 +83,12 @@ class Client
         );
     }
 
+    /**
+     * @desc   获取请求地址
+     * @author limx
+     * @return mixed
+     * @throws HttpException
+     */
     protected function getUrl()
     {
         if (!empty($this->url)) {
@@ -92,15 +103,22 @@ class Client
 
     }
 
+    /**
+     * @desc   获取请求的数据
+     * @author limx
+     * @return string
+     * @throws HttpException
+     */
     protected function getData()
     {
         switch ($this->contentType) {
             case 'json':
+                $data = json_encode($this->data);
                 $this->setHeaders([
                     'Content-Type' => 'application/json',
-                    'Content-Length' => strlen($this->body)
+                    'Content-Length' => strlen($data)
                 ]);
-                return json_encode($this->data);
+                return json_encode($data);
             default:
                 return http_build_query($this->data);
         }
@@ -108,6 +126,11 @@ class Client
         throw new HttpException('Failed to get input Data!');
     }
 
+    /**
+     * @desc   获取请求方法
+     * @author limx
+     * @return null|string
+     */
     protected function getMethod()
     {
         if (isset($this->method)) {
@@ -119,6 +142,12 @@ class Client
         return "GET";
     }
 
+    /**
+     * @desc   设置请求地址
+     * @author limx
+     * @param null $url
+     * @return $this
+     */
     public function setUrl($url = null)
     {
         if (isset($url)) {
@@ -137,6 +166,12 @@ class Client
         return $this;
     }
 
+    /**
+     * @desc   设置请求头信息
+     * @author limx
+     * @param array $input
+     * @return $this
+     */
     public function setHeaders($input = [])
     {
         $req = [];
@@ -147,32 +182,64 @@ class Client
         return $this;
     }
 
+    /**
+     * @desc   设置请求数据
+     * @author limx
+     * @param array $input
+     * @return $this
+     */
     public function setData($input = [])
     {
         $this->data = array_merge($this->data, $input);;
         return $this;
     }
 
-    public function setJsonData($input = [])
+    /**
+     * @desc   请求数据类型 JSON
+     * @author limx
+     * @param null $contentType
+     * @return $this
+     */
+    public function format($contentType = null)
     {
-        $this->contentType = 'json';
-        $this->data = array_merge($this->data, $input);;
+        if (isset($contentType)) {
+            $this->contentType = $contentType;
+        }
         return $this;
     }
 
-
+    /**
+     * @desc   Curl Get方法
+     * @author limx
+     * @param array ...$params
+     * @return Response
+     */
     public function get(...$params)
     {
         $this->method = "GET";
         return $this->execute(...$params);
     }
 
+    /**
+     * @desc   Curl Post方法
+     * @author limx
+     * @param array ...$params
+     * @return Response
+     */
     public function post(...$params)
     {
         $this->method = "POST";
         return $this->execute(...$params);
     }
 
+    /**
+     * @desc   Curl 执行方法
+     * @author limx
+     * @param null  $url
+     * @param array $params
+     * @return Response
+     * @throws HttpException
+     */
     public function execute($url = null, $params = [])
     {
         $this->setData($params);
@@ -191,6 +258,10 @@ class Client
         return $this->response;
     }
 
+    /**
+     * @desc   清理临时数据
+     * @author limx
+     */
     protected function clear()
     {
         $this->data = [];

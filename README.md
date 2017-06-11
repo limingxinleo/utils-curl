@@ -6,20 +6,52 @@ composer require limingxinleo/utils-curl
 ~~~
 
 ### 使用方法
+* GET 方法
 ~~~
+require_once 'vendor/autoload.php';
+
 use limx\curl\Application;
 
 $curl = new Application();
+// 可以在opt中设置header
+$curl->opt->setHeader("Opt-Test", 'Opt-Value');
 
-$curl->opt->setUrl('https://demo.phalcon.lmx0536.cn/test/api/api?get=3');
-$body = http_build_query(['post' => 1, 'post2' => 2]);
-$curl->opt->setBody($body);
-$curl->opt->setHeader('Header-Test', 1);
-$curl->opt->setHeader('Header-Test2', 3);
-
-$result = $curl->client->execute()->getJsonContent();
+$url = 'https://demo.phalcon.lmx0536.cn/test/api/api?get=simpleGet';
+$params = [
+    'get1' => 1,
+    'get2' => 2,
+];
+// 在Client中设置Header
+$header = [
+    'Client-Test' => 'Client-Value'
+];
+$result = $curl->client->setHeaders($header)->get($url, $params)->getJsonContent();
 print_r($result);
 
-$result = $curl->client->get()->getContent();
-print_r(json_decode($result, true));
+~~~
+
+* Post
+~~~
+require_once 'vendor/autoload.php';
+
+use limx\curl\Application;
+
+$curl = new Application();
+$url = 'https://demo.phalcon.lmx0536.cn/test/api/api?get=simpleGet';
+$params = [
+    'get1' => 1,
+    'get2' => 2,
+];
+$headers = [
+    'Header-Test' => '1',
+];
+
+// Content-Type=application/x-www-form-urlencoded
+$result = $curl->client->setHeaders($headers)->post($url, $params)->getJsonContent();
+print_r($result);
+
+// Content-Type=json
+$result = $curl->client->setHeaders($headers)->format('json')->post($url, $params)->getJsonContent();
+print_r($result);
+
 ~~~

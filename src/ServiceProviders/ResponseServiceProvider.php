@@ -8,18 +8,16 @@
 // +----------------------------------------------------------------------
 namespace limx\curl\ServiceProviders;
 
-use limx\curl\Client;
+use limx\curl\Response;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
-class ClientServiceProvider implements ServiceProviderInterface
+class ResponseServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple)
     {
-        $pimple['client'] = function ($pimple) {
-            $opt = $pimple['opt'];
-            $response = $pimple['response'];
-            return new Client($opt, $response);
+        $pimple['response'] = function ($pimple) {
+            return new Response();
         };
     }
 

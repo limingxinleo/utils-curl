@@ -14,8 +14,9 @@ use Config;
 /**
  * Class Application
  * @package limx\curl
- * @property Opt    $opt
- * @property Client $client
+ * @property Opt      $opt
+ * @property Client   $client
+ * @property Response $response
  */
 class Application extends Container
 {
@@ -27,6 +28,7 @@ class Application extends Container
     protected $providers = [
         ServiceProviders\OptServiceProvider::class,
         ServiceProviders\ClientServiceProvider::class,
+        ServiceProviders\ResponseServiceProvider::class,
     ];
 
     /**

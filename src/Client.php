@@ -15,9 +15,12 @@ class Client
 {
     public $opt;
 
-    public function __construct(Opt $opt)
+    public $response;
+
+    public function __construct(Opt $opt, Response $reponse)
     {
         $this->opt = $opt;
+        $this->response = $reponse;
     }
 
     public function getInstance()
@@ -84,7 +87,8 @@ class Client
         }
         //关闭URL请求
         curl_close($_instance);
-        return $result;
+        $this->response->setContent($result);
+        return $this->response;
     }
 
 }
